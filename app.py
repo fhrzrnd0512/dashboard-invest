@@ -62,6 +62,10 @@ def load_investasi_data(file_list):
                         if df.shape[1] <= 1:
                             f.seek(0)
                             df = pd.read_csv(f, sep=';', dtype=str)
+                        
+                        # 💡 KUNCI PERBAIKAN: Paksa semua nama kolom jadi huruf kecil dan hapus spasi berlebih
+                        df.columns = df.columns.str.lower().str.strip()
+                        
                         df_list.append(df)
                     except Exception as e:
                         pass
