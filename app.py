@@ -12,12 +12,8 @@ import re
 # ==========================================
 st.set_page_config(page_title="Dashboard LKPM Sumut", page_icon="📈", layout="wide")
 
-# Kredensial (Hardcoded untuk internal sederhana)
-CREDENTIALS = {
-    "bps_sumut": "pdrb2026",
-    "neraca": "admin123",
-    "timneraca": "investw"
-}
+# Memanggil Kredensial dari Brankas Rahasia Streamlit
+CREDENTIALS = st.secrets["passwords"]
 
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
