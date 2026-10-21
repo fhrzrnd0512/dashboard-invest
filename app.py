@@ -126,7 +126,7 @@ def load_investasi_data(file_list):
     })
     
     df_clean = df_clean.dropna(subset=['Tahun'])
-    df_clean = df_clean[df_clean['Tahun'] != 2020]
+    #df_clean = df_clean[df_clean['Tahun'] != 2020]
     
     return df_clean
 
