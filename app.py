@@ -41,18 +41,17 @@ if not st.session_state["logged_in"]:
     st.stop() # Hentikan eksekusi kode di bawah ini jika belum login
 
 # ==========================================
-# 1. PERSIAPAN DATA (DENGAN CACHING)
+# 1. PERSIAPAN DATA (DENGAN CACHING PINTAR)
 # ==========================================
+
+# Fungsi sekarang menerima parameter 'file_list'
 @st.cache_data(show_spinner=True)
-def load_investasi_data():
-    # Mencari semua file zip di direktori
-    zip_files = glob.glob("*.zip")
-    
-    if not zip_files:
+def load_investasi_data(file_list):
+    if not file_list:
         return pd.DataFrame()
     
     df_list = []
-    for zfile in zip_files:
+    for zfile in file_list:
         with zipfile.ZipFile(zfile, 'r') as z:
             # Cari file csv di dalam zip
             csv_files = [f for f in z.namelist() if f.lower().endswith('.csv')]
@@ -127,8 +126,9 @@ def load_investasi_data():
     
     return df_clean
 
-# Load data (Akan tersimpan di cache memori, sangat cepat!)
-df_master = load_investasi_data()
+# DETEKSI FILE DIPINDAH KE LUAR FUNGSI CACHE
+semua_file_zip = glob.glob("*.zip")
+df_master = load_investasi_data(semua_file_zip)
 
 # ==========================================
 # 2. SIDEBAR (FILTER)
