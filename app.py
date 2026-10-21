@@ -1,3 +1,4 @@
+import io
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -58,16 +59,25 @@ def load_investasi_data(file_list):
             if csv_files:
                 with z.open(csv_files[0]) as f:
                     try:
-                        df = pd.read_csv(f, sep=',', dtype=str)
-                        if df.shape[1] <= 1:
-                            f.seek(0)
-                            df = pd.read_csv(f, sep=';', dtype=str)
+                        # 1. Baca isi file secara mentah (sebagai Bytes)
+                        raw_data = f.read()
                         
-                        # 💡 KUNCI PERBAIKAN: Paksa semua nama kolom jadi huruf kecil dan hapus spasi berlebih
+                        # 2. Dekode dengan 'utf-8-sig' (Ini trik ampuh untuk membunuh BOM / Karakter Tak Kasat Mata)
+                        content = raw_data.decode('utf-8-sig', errors='replace')
+                        
+                        # 3. Deteksi delimiter otomatis dengan melihat baris pertama
+                        first_line = content.split('\n')[0]
+                        delimiter = ';' if ';' in first_line else ','
+                        
+                        # 4. Konversi teks tersebut menjadi tabel Pandas
+                        df = pd.read_csv(io.StringIO(content), sep=delimiter, dtype=str)
+                        
+                        # 5. Seragamkan semua nama kolom (Huruf kecil & tanpa spasi lebih)
                         df.columns = df.columns.str.lower().str.strip()
                         
                         df_list.append(df)
                     except Exception as e:
+                        # Jika ada file yang korup, lewati saja tanpa mematikan aplikasi
                         pass
     
     if not df_list:
